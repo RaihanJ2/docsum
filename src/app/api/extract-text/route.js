@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import pdfParse from "pdf-parse";
 
 export async function POST(request) {
