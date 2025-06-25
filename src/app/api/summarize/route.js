@@ -1,9 +1,4 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export async function POST(request) {
   try {
@@ -27,40 +22,73 @@ export async function POST(request) {
       executive: "Write an executive summary suitable for business contexts.",
     };
 
-    const prompt = `Please summarize the following text. ${typeInstructions[summaryType]} ${lengthInstructions[summaryLength]}
+    const prompt = `You are a helpful assistant that creates clear, concise, and informative summaries of text documents.
+
+Please summarize the following text. ${typeInstructions[summaryType]} ${lengthInstructions[summaryLength]}
 
 Text to summarize:
 ${text}`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a helpful assistant that creates clear, concise, and informative summaries of text documents.",
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      max_tokens:
-        summaryLength === "short"
-          ? 300
-          : summaryLength === "medium"
-          ? 600
-          : 1000,
-      temperature: 0.3,
-    });
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.3,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens:
+              summaryLength === "short"
+                ? 300
+                : summaryLength === "medium"
+                ? 600
+                : 1000,
+          },
+        }),
+      }
+    );
 
-    const summary = completion.choices[0].message.content;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("Gemini API Error:", errorData);
+      throw new Error(
+        `Gemini API error: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const result = await response.json();
+
+    if (
+      !result.candidates ||
+      !result.candidates[0] ||
+      !result.candidates[0].content
+    ) {
+      throw new Error("Invalid response from Gemini API");
+    }
+
+    const summary = result.candidates[0].content.parts[0].text;
 
     return NextResponse.json({ summary });
   } catch (error) {
     console.error("Error generating summary:", error);
     return NextResponse.json(
-      { error: "Failed to generate summary" },
+      {
+        error:
+          "Failed to generate summary. Please check your API key and try again.",
+      },
       { status: 500 }
     );
   }
