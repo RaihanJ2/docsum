@@ -6,6 +6,7 @@ import { TextInput } from "./component/TextInput";
 import { FileUpload } from "./component/Upload";
 import { SummaryResult } from "./component/SummaryResult";
 import { HistoryPanel } from "./component/HistoryPanel";
+import { Brain, Sparkles, TrendingUp } from "lucide-react";
 
 export function useSummarizer() {
   const [file, setFile] = useState(null);
@@ -75,7 +76,7 @@ export function useSummarizer() {
         summary: newSummary,
         type: summaryType,
         length: summaryLength,
-        timestamp: new Date().toLocaleString(),
+        timestamp: new Date().toISOString(),
       };
 
       setHistory((prev) => [historyItem, ...prev]);
@@ -139,26 +140,40 @@ export default function Home() {
   } = useSummarizer();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-950">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-8 lg:py-12">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-300 mb-4">
+          <div className="text-center mb-12">
+            <div className="flex justify-center items-center mb-6">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent p-4 rounded-2xl text-4xl font-bold">
+                DocSum
+              </div>
+            </div>
+            <h1 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-6">
               AI Document Summarizer
             </h1>
-            <p className="text-lg text-gray-100">
-              Upload PDFs or paste text to get intelligent summaries powered by
-              AI
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Transform lengthy documents into concise, intelligent summaries
+              powered by advanced AI technology
             </p>
           </div>
 
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             {/* Input Section */}
-            <div className="lg:col-span-2 space-y-6">
-              <FileUpload file={file} setFile={setFile} />
-              <TextInput text={text} setText={setText} />
+            <div className="xl:col-span-3 space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <FileUpload file={file} setFile={setFile} />
+                <TextInput text={text} setText={setText} />
+              </div>
+
               <SummaryOptions
                 summaryType={summaryType}
                 setSummaryType={setSummaryType}
@@ -168,18 +183,52 @@ export default function Home() {
                 loading={loading}
                 disabled={!text && !file}
               />
+
+              {summary && (
+                <SummaryResult summary={summary} onDownload={downloadSummary} />
+              )}
             </div>
 
-            {/* Results & History Section */}
-            <div className="space-y-6">
-              <SummaryResult summary={summary} onDownload={downloadSummary} />
-              <HistoryPanel
-                history={history}
-                onClearHistory={clearHistory}
-                onSelectSummary={setSummary}
-              />
+            {/* History Section */}
+            <div className="xl:col-span-1">
+              <div className="sticky top-8">
+                <HistoryPanel
+                  history={history}
+                  onClearHistory={clearHistory}
+                  onSelectSummary={setSummary}
+                />
+              </div>
             </div>
           </div>
+
+          {/* Stats Section */}
+          {history.length > 0 && (
+            <div className="mt-16 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-600 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-100 mb-6 text-center">
+                Your Summary Statistics
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-400 mb-2">
+                    {history.length}
+                  </div>
+                  <div className="text-gray-400">Total Summaries</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-400 mb-2">
+                    {history.filter((h) => h.type === "general").length}
+                  </div>
+                  <div className="text-gray-400">General Summaries</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-400 mb-2">
+                    {history.filter((h) => h.length === "short").length}
+                  </div>
+                  <div className="text-gray-400">Quick Summaries</div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
