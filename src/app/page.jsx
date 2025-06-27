@@ -151,13 +151,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="flex justify-center items-center mb-6">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent p-4 rounded-2xl text-4xl font-bold">
-                DocSum
-              </div>
-            </div>
-            <h1 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-6">
-              AI Document Summarizer
+            <h1 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-red-400 to-gray-100 bg-clip-text text-transparent mb-6">
+              DocSum
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Transform lengthy documents into concise, intelligent summaries

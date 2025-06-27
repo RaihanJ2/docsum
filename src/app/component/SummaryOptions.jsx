@@ -99,7 +99,7 @@ export function SummaryOptions({
                 key={option.value}
                 className={`relative cursor-pointer transition-all duration-200 ${
                   summaryLength === option.value
-                    ? "ring-2 ring-purple-500 bg-purple-500/10"
+                    ? "ring-2 ring-blue-500 bg-blue-500/10"
                     : "hover:bg-gray-700/50 hover:border-gray-500"
                 } border-2 border-gray-600 rounded-xl p-4 text-center`}
                 onClick={() => setSummaryLength(option.value)}
@@ -110,7 +110,7 @@ export function SummaryOptions({
                 <p className="text-gray-400 text-xs mb-1">{option.desc}</p>
                 <p className="text-gray-500 text-xs">{option.time}</p>
                 {summaryLength === option.value && (
-                  <div className="absolute top-2 right-2 w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                 )}
               </div>
             ))}

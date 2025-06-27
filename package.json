@@ -11,9 +11,13 @@
   "dependencies": {
     "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
+    "bcryptjs": "^3.0.2",
     "lucide-react": "^0.523.0",
     "mammoth": "^1.9.1",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.1",
     "next": "15.3.4",
+    "next-auth": "^4.24.11",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^5.3.31",
     "react": "^19.0.0",
