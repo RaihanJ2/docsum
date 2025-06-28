@@ -6,6 +6,7 @@ import { TextInput } from "./component/TextInput";
 import { FileUpload } from "./component/Upload";
 import { SummaryResult } from "./component/SummaryResult";
 import { HistoryPanel } from "./component/HistoryPanel";
+import { LoginButton } from "./component/LoginButton";
 import { Brain, Sparkles, TrendingUp } from "lucide-react";
 
 export function useSummarizer() {
@@ -149,15 +150,20 @@ export default function Home() {
 
       <div className="relative z-10 container mx-auto px-4 py-8 lg:py-12">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-red-400 to-gray-100 bg-clip-text text-transparent mb-6">
-              DocSum
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Transform lengthy documents into concise, intelligent summaries
-              powered by advanced AI technology
-            </p>
+          {/* Header with Login */}
+          <div className="flex justify-between items-start mb-8">
+            <div className="text-center flex-1">
+              <h1 className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-red-400 to-gray-100 bg-clip-text text-transparent mb-6">
+                DocSum
+              </h1>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Transform lengthy documents into concise, intelligent summaries
+                powered by advanced AI technology
+              </p>
+            </div>
+            <div className="mt-4">
+              <LoginButton />
+            </div>
           </div>
 
           {/* Main Content */}
