@@ -37,7 +37,7 @@ export function LoginButton() {
         {/* Sign Out Button */}
         <button
           onClick={() => signOut()}
-          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium"
+          className="cursor-pointer flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium"
         >
           <LogOut size={16} />
           <span>Sign Out</span>
@@ -49,7 +49,7 @@ export function LoginButton() {
   return (
     <button
       onClick={() => signIn("google")}
-      className="flex items-center space-x-2 bg-white hover:bg-gray-100 text-gray-900 px-6 py-3 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+      className="cursor-pointer flex items-center space-x-2 bg-white hover:bg-gray-100 text-gray-900 px-6 py-3 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24">
         <path
