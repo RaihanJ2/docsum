@@ -16,11 +16,9 @@ export const authOptions = {
         // Connect to database
         await connectDB();
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email: user.email });
 
         if (!existingUser) {
-          // Create new user if doesn't exist
           const newUser = new User({
             email: user.email,
             name: user.name || profile.name,
@@ -30,7 +28,6 @@ export const authOptions = {
           await newUser.save();
           console.log(`✅ New user created: ${user.email}`);
         } else {
-          // Update existing user info if needed
           let updateNeeded = false;
           const updates = {};
 
@@ -53,7 +50,6 @@ export const authOptions = {
         return true;
       } catch (error) {
         console.error("❌ Error saving user to database:", error);
-        // Still allow sign in even if database save fails
         return true;
       }
     },
@@ -66,7 +62,6 @@ export const authOptions = {
             session.user.id = dbUser._id.toString();
             session.user.dbId = dbUser._id.toString();
           } else {
-            // Fallback to token sub if user not found in DB
             session.user.id = token.sub;
           }
         } catch (error) {
@@ -77,7 +72,6 @@ export const authOptions = {
       return session;
     },
     async jwt({ token, user, account }) {
-      // Add user ID to token on first sign in
       if (user) {
         try {
           await connectDB();
@@ -104,7 +98,6 @@ export const authOptions = {
   pages: {
     signIn: "/auth/signin",
   },
-  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);
