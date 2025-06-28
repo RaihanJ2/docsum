@@ -1,8 +1,13 @@
 "use client";
 
-import { History, Trash2, Clock, FileText, Eye } from "lucide-react";
+import { History, Trash2, Clock, FileText, Eye, Loader2 } from "lucide-react";
 
-export function HistoryPanel({ history, onClearHistory, onSelectSummary }) {
+export function HistoryPanel({
+  history,
+  loading,
+  onClearHistory,
+  onSelectSummary,
+}) {
   const getSummaryTypeIcon = (type) => {
     const icons = {
       general: "📄",
@@ -60,7 +65,16 @@ export function HistoryPanel({ history, onClearHistory, onSelectSummary }) {
         )}
       </div>
 
-      {history.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="bg-gray-700/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Loader2 size={32} className="text-blue-500 animate-spin" />
+          </div>
+          <p className="text-gray-400 text-lg font-medium mb-2">
+            Loading history...
+          </p>
+        </div>
+      ) : history.length === 0 ? (
         <div className="text-center py-12">
           <div className="bg-gray-700/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <Clock size={32} className="text-gray-500" />

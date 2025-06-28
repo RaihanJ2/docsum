@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { SummaryOptions } from "./component/SummaryOptions";
 import { TextInput } from "./component/TextInput";
 import { FileUpload } from "./component/Upload";
@@ -10,6 +11,7 @@ import { LoginButton } from "./component/LoginButton";
 import { Brain, Sparkles, TrendingUp } from "lucide-react";
 
 export function useSummarizer() {
+  const { data: session } = useSession();
   const [file, setFile] = useState(null);
   const [text, setText] = useState("");
   const [summary, setSummary] = useState("");
@@ -17,6 +19,40 @@ export function useSummarizer() {
   const [summaryType, setSummaryType] = useState("general");
   const [summaryLength, setSummaryLength] = useState("medium");
   const [history, setHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // Load history when user is authenticated
+  useEffect(() => {
+    if (session) {
+      loadHistory();
+    } else {
+      setHistory([]);
+    }
+  }, [session]);
+
+  const loadHistory = async () => {
+    if (!session) return;
+
+    setLoadingHistory(true);
+    try {
+      const response = await fetch("/api/summaries");
+      if (response.ok) {
+        const data = await response.json();
+        const formattedHistory = data.summaries.map((item) => ({
+          id: item._id,
+          title: item.title,
+          summary: item.summary,
+          type: item.summaryType,
+          length: item.summaryLength,
+          timestamp: item.createdAt,
+        }));
+        setHistory(formattedHistory);
+      }
+    } catch (error) {
+      console.error("Failed to load history:", error);
+    }
+    setLoadingHistory(false);
+  };
 
   const extractTextFromFile = async (file) => {
     const formData = new FormData();
@@ -70,17 +106,41 @@ export function useSummarizer() {
       const newSummary = data.summary;
       setSummary(newSummary);
 
-      // Add to history
-      const historyItem = {
-        id: Date.now(),
-        title: file ? file.name : "Text Input",
-        summary: newSummary,
-        type: summaryType,
-        length: summaryLength,
-        timestamp: new Date().toISOString(),
-      };
+      // Save to database if user is logged in
+      if (session) {
+        try {
+          await fetch("/api/summaries", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: file ? file.name : "Text Input",
+              originalText: textToSummarize,
+              summary: newSummary,
+              summaryType,
+              summaryLength,
+            }),
+          });
 
-      setHistory((prev) => [historyItem, ...prev]);
+          // Reload history to show the new summary
+          loadHistory();
+        } catch (error) {
+          console.error("Failed to save summary:", error);
+          // Continue even if saving fails - show a notification
+        }
+      } else {
+        // Add to local history for non-authenticated users
+        const historyItem = {
+          id: Date.now(),
+          title: file ? file.name : "Text Input",
+          summary: newSummary,
+          type: summaryType,
+          length: summaryLength,
+          timestamp: new Date().toISOString(),
+        };
+        setHistory((prev) => [historyItem, ...prev]);
+      }
     } catch (error) {
       console.error("Summarization failed:", error);
       alert("Failed to summarize. Please check your API key and try again.");
@@ -115,6 +175,7 @@ export function useSummarizer() {
     summaryLength,
     setSummaryLength,
     history,
+    loadingHistory,
     summarizeText,
     clearHistory,
     downloadSummary,
@@ -135,6 +196,7 @@ export default function Home() {
     summaryLength,
     setSummaryLength,
     history,
+    loadingHistory,
     summarizeText,
     clearHistory,
     downloadSummary,
@@ -195,6 +257,7 @@ export default function Home() {
               <div className="sticky top-8">
                 <HistoryPanel
                   history={history}
+                  loading={loadingHistory}
                   onClearHistory={clearHistory}
                   onSelectSummary={setSummary}
                 />
