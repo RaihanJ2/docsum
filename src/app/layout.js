@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "AI Document Summarizer",
+  title: "DocSum",
   description:
     "Upload PDFs or paste text to get intelligent summaries powered by AI",
 };

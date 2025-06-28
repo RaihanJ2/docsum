@@ -35,7 +35,8 @@ export function useSummarizer() {
 
     setLoadingHistory(true);
     try {
-      const response = await fetch("/api/summaries");
+      // Fix: Changed from /api/summaries to /api/summary
+      const response = await fetch("/api/summary");
       if (response.ok) {
         const data = await response.json();
         const formattedHistory = data.summaries.map((item) => ({
@@ -109,7 +110,8 @@ export function useSummarizer() {
       // Save to database if user is logged in
       if (session) {
         try {
-          await fetch("/api/summaries", {
+          // Fix: Changed from /api/summaries to /api/summary
+          await fetch("/api/summary", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
