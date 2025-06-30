@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
+import path from "path";
+import fs from "fs";
 
 export async function POST(request) {
   try {
@@ -180,4 +182,43 @@ export async function GET() {
     maxFileSize: "10MB",
     maxTextLength: "1MB",
   });
+}
+
+// Test function to check if test file exists (remove this in production)
+export async function testFileAccess() {
+  try {
+    const testFilePath = path.join(
+      process.cwd(),
+      "test",
+      "data",
+      "05-versions-space.pdf"
+    );
+    console.log("Checking file at:", testFilePath);
+
+    if (fs.existsSync(testFilePath)) {
+      console.log("✅ Test file exists");
+      const stats = fs.statSync(testFilePath);
+      console.log("File size:", stats.size, "bytes");
+      return true;
+    } else {
+      console.log("❌ Test file does not exist");
+
+      // Check what files are available in test directory
+      const testDir = path.join(process.cwd(), "test");
+      if (fs.existsSync(testDir)) {
+        console.log("Test directory exists. Contents:");
+        const contents = fs.readdirSync(testDir, { recursive: true });
+        console.log(contents);
+      } else {
+        console.log("Test directory does not exist");
+        console.log("Available directories in project root:");
+        const rootContents = fs.readdirSync(process.cwd());
+        console.log(rootContents);
+      }
+      return false;
+    }
+  } catch (error) {
+    console.error("Error checking test file:", error);
+    return false;
+  }
 }
